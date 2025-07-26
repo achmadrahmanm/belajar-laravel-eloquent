@@ -4,6 +4,7 @@ namespace App\Models;
 
 use Illuminate\Database\Eloquent\Factories\HasFactory;
 use Illuminate\Database\Eloquent\Model;
+use App\Models\Scopes\IsActiveScope;
 
 class Category extends Model
 {
@@ -18,5 +19,18 @@ class Category extends Model
         'id',
         'name',
         'description',
+        'is_active',
     ];
+
+    protected $attributes = [
+        'is_active' => true,
+    ];
+
+    protected static function booted()
+    {
+        parent::booted();
+
+        // Apply the IsActiveScope globally
+        self::addGlobalScope(new IsActiveScope());
+    }
 }

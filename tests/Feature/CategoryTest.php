@@ -37,6 +37,7 @@ class CategoryTest extends TestCase
                 'id' => 'cat-' . str_pad($i, 3, '0', STR_PAD_LEFT),
                 'name' => 'Category ' . $i,
                 'description' => 'This is the category number ' . $i . '.',
+                'is_active' => true, // Assuming all categories are active by default
             ];
         }
 
@@ -131,6 +132,7 @@ class CategoryTest extends TestCase
                 'id' => 'cat-delete-' . str_pad($i, 3, '0', STR_PAD_LEFT),
                 'name' => 'Category Delete ' . $i,
                 'description' => 'This is the category number ' . $i . '.',
+                'is_active' => true, // Assuming all categories are active by default
             ];
         }
 
@@ -159,5 +161,25 @@ class CategoryTest extends TestCase
             'name' => 'Mass Updated Category',
             'description' => 'This category has been mass updated.',
         ]);
+    }
+
+    public function testScopeActive(): void
+    {
+        // $this->seed(CategorySeeder::class);
+
+        // // Assuming the IsActiveScope is applied globally
+        // $activeCategories = Category::all();
+        // $this->assertTrue($activeCategories->isNotEmpty(), 'There should be active categories by default.');
+
+        // Now let's create an active category
+        $category = new Category();
+        $category->id = 'cat-active-001';
+        $category->name = 'Active Category';
+        $category->description = 'This category is active.';
+        $category->is_active = true; // Set the active status
+        $category->save();
+
+        $activeCategories = Category::all();
+        $this->assertCount(1, $activeCategories, 'There should be 1 active category after inserting an active category.');
     }
 }
