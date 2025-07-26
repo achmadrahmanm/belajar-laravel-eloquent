@@ -6,8 +6,9 @@ use App\Models\Category;
 use Illuminate\Foundation\Testing\RefreshDatabase;
 use Illuminate\Foundation\Testing\WithFaker;
 use Tests\TestCase;
+use Database\Seeders\CategorySeeder;
 
-class CatergoryTest extends TestCase
+class CategoryTest extends TestCase
 {
     /**
      * A basic feature test example.
@@ -44,5 +45,14 @@ class CatergoryTest extends TestCase
         Category::insert($categories);
         $total = Category::count();
         $this->assertEquals(10, $total, 'Total categories should be 10 after inserting 9 more categories.');
+    }
+
+    public function testFind(): void
+    {
+        $this->seed(CategorySeeder::class);
+
+        $category = Category::find('cat-001');
+        $this->assertNotNull($category, 'Category with id cat-001 should exist.');
+        $this->assertEquals('Category 1', $category->name, 'Category name should be Category 1.');
     }
 }
