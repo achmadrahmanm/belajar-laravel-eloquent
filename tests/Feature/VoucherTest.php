@@ -66,19 +66,34 @@ class VoucherTest extends TestCase
         $this->assertTrue($all_vouchers_include_deleted->contains($voucher), 'Voucher should be found in the trashed records.');
     }
 
-    // public function testForceDeletedVoucher(): void
-    // {
-    //     $this->seed(VoucherSeeder::class);
+    public function testForceDeletedVoucher(): void
+    {
+        $this->seed(VoucherSeeder::class);
 
-    //     $voucher = Voucher::where('name', 'Voucher 1')->first();
-    //     $this->assertNotNull($voucher, 'Voucher with name Voucher 1 should exist.');
+        $voucher = Voucher::where('name', 'Voucher 1')->first();
+        $this->assertNotNull($voucher, 'Voucher with name Voucher 1 should exist.');
 
-    //     $voucher->delete();
-    //     $voucher->forceDelete();
+        $voucher->delete();
+        $voucher->forceDelete();
 
-    //     $this->assertDatabaseMissing('vouchers', [
-    //         'id' => $voucher->id,
-    //         'name' => 'Voucher 1',
-    //     ]);
-    // }
+        $this->assertDatabaseMissing('vouchers', [
+            'id' => $voucher->id,
+            'name' => 'Voucher 1',
+        ]);
+    }
+
+    public function testLocalScopeActive(): void
+    {
+        $voucher = new Voucher();
+        $voucher->name = 'Active Voucher';
+        $voucher->voucher_code = 'ACTIVE123';
+        $voucher->is_active = true;
+        $voucher->save();
+
+        $total = Voucher::active()->count();
+        $this->assertEquals(1, $total, 'There should be 1 active voucher.');
+
+        $total = Voucher::nonActive()->count();
+        $this->assertEquals(0, $total, 'There should be no non-active vouchers.');
+    }
 }
