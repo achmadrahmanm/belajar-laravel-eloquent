@@ -56,19 +56,6 @@ class CategoryTest extends TestCase
         $this->assertEquals('Category 1', $category->name, 'Category name should be Category 1.');
     }
 
-    public function testUpdate(): void
-    {
-        $this->seed(CategorySeeder::class);
-
-        $category = Category::find('cat-001');
-        $category->name = 'Updated Category 1';
-        $category->save();
-
-        $this->assertDatabaseHas('categories', [
-            'id' => 'cat-001',
-            'name' => 'Updated Category 1',
-        ]);
-    }
 
     public function testSelect(): void
     {
@@ -88,5 +75,39 @@ class CategoryTest extends TestCase
             $category->description = 'Description updated';
             $category->save();
         });
+    }
+
+    public function testUpdate(): void
+    {
+        $this->seed(CategorySeeder::class);
+
+        $category = Category::find('cat-001');
+        $category->name = 'Updated Category 1';
+        $category->save();
+
+        $this->assertDatabaseHas('categories', [
+            'id' => 'cat-001',
+            'name' => 'Updated Category 1',
+        ]);
+    }
+
+
+    public function testUpdateMany(): void
+    {
+        $categories = [];
+        for ($i = 1; $i <= 8; $i++) {
+            $categories[] = [
+                'id' => 'cat-' . str_pad($i, 3, '0', STR_PAD_LEFT),
+                'name' => 'Category ' . $i,
+                'description' => 'This is the category number ' . $i . '.',
+            ];
+        }
+
+        Category::insert($categories);
+        $this->assertCount(8, $categories, 'There should be 8 categories with id starting with cat-loop-*');
+
+        Category::where('id', 'like', 'cat-%')->update(
+            ['description' => 'Description updated in bulk']
+        );
     }
 }
