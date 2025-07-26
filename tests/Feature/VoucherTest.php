@@ -7,6 +7,8 @@ use Illuminate\Foundation\Testing\WithFaker;
 use Tests\TestCase;
 use App\Models\Voucher;
 
+use Database\Seeders\VoucherSeeder;
+
 class VoucherTest extends TestCase
 {
     /**
@@ -39,5 +41,41 @@ class VoucherTest extends TestCase
 
         $this->assertNotNull($voucher->id, 'Voucher ID should not be null after saving.');
         $this->assertNotNull($voucher->voucher_code, 'Voucher code should not be null after saving.');
+    }
+
+    public function testSoftDeleteVoucher(): void
+    {
+        $this->seed(VoucherSeeder::class);
+
+        $voucher = Voucher::where('name', 'Voucher 1')->first();
+        $this->assertNotNull($voucher, 'Voucher with name Voucher 1 should exist.');
+
+        $voucher->delete();
+
+        $this->assertSoftDeleted('vouchers', [
+            'id' => $voucher->id,
+            'name' => 'Voucher 1',
+        ]);
+
+        $this->assertDatabaseMissing('vouchers', [
+            'id' => $voucher->id,
+            'deleted_at' => null,
+        ]);
+    }
+
+    public function testForceDeletedVoucher(): void
+    {
+        $this->seed(VoucherSeeder::class);
+
+        $voucher = Voucher::where('name', 'Voucher 1')->first();
+        $this->assertNotNull($voucher, 'Voucher with name Voucher 1 should exist.');
+
+        $voucher->delete();
+        $voucher->forceDelete();
+
+        $this->assertDatabaseMissing('vouchers', [
+            'id' => $voucher->id,
+            'name' => 'Voucher 1',
+        ]);
     }
 }

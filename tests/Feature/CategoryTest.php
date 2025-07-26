@@ -140,4 +140,24 @@ class CategoryTest extends TestCase
         Category::where('id', 'like', 'cat-delete-%')->delete();
         $this->assertCount(0, Category::where('id', 'like', 'cat-delete-%')->get(), 'All categories with id starting with cat-delete-* should be deleted.');
     }
+
+    public function testUpdateMass(): void
+    {
+        $this->seed(CategorySeeder::class);
+
+        $request = [
+            'name' => 'Mass Updated Category',
+            'description' => 'This category has been mass updated.',
+        ];
+
+        $category = Category::find('cat-001');
+        $category->fill($request);
+        $category->save();
+
+        $this->assertDatabaseHas('categories', [
+            'id' => 'cat-001',
+            'name' => 'Mass Updated Category',
+            'description' => 'This category has been mass updated.',
+        ]);
+    }
 }

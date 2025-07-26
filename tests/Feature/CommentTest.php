@@ -26,4 +26,33 @@ class CommentTest extends TestCase
             'comment' => 'This is a test comment.',
         ]);
     }
+
+    public function testDefaultAttributes()
+    {
+        $comment = new Comment();
+        $comment->email = 'test@example.com';
+        $comment->save();
+
+        $this->assertDatabaseHas('comments', [
+            'email' => 'test@example.com',
+            'title' => 'Sample Title',
+            'comment' => 'Sample Comment',
+        ]);
+    }
+
+    public function testFillableAttributes()
+    {
+        Comment::create([
+            'email' => 'test@example.com',
+            'title' => 'Test Comment',
+            'comment' => 'This is a test comment.',
+        ]);
+
+
+        $this->assertDatabaseHas('comments', [
+            'email' => 'test@example.com',
+            'title' => 'Test Comment',
+            'comment' => 'This is a test comment.',
+        ]);
+    }
 }
