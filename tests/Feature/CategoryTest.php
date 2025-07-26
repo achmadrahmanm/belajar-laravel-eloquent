@@ -69,4 +69,24 @@ class CategoryTest extends TestCase
             'name' => 'Updated Category 1',
         ]);
     }
+
+    public function testSelect(): void
+    {
+        for ($i = 1; $i <= 5; $i++) {
+            $category = new Category();
+            $category->id = 'cat-loop-' . $i;
+            $category->name = 'Loop Category ' . $i;
+            $category->description = 'Inserted in loop #' . $i;
+            $category->save();
+        }
+
+        $categories = Category::where('id', 'like', 'cat-loop-%')->get();
+        $this->assertCount(5, $categories, 'There should be 5 categories with id starting with cat-loop-*');
+
+        // Update the description of the selected categories
+        $categories->each(function ($category) {
+            $category->description = 'Description updated';
+            $category->save();
+        });
+    }
 }
