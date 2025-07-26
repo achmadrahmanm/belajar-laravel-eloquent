@@ -27,4 +27,22 @@ class CatergoryTest extends TestCase
             'description' => 'This is the first category.',
         ]);
     }
+
+    public function testInsertManyCategories(): void
+    {
+        $categories = [];
+        for ($i = 1; $i <= 10; $i++) {
+            $categories[] = [
+                'id' => 'cat-' . str_pad($i, 3, '0', STR_PAD_LEFT),
+                'name' => 'Category ' . $i,
+                'description' => 'This is the category number ' . $i . '.',
+            ];
+        }
+
+        // Category::query()->insert($categories); 
+        // Using Category::query()->insert($categories) is same as Category::insert($categories) 
+        Category::insert($categories);
+        $total = Category::count();
+        $this->assertEquals(10, $total, 'Total categories should be 10 after inserting 9 more categories.');
+    }
 }
