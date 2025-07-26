@@ -13,7 +13,7 @@ class CategoryTest extends TestCase
     /**
      * A basic feature test example.
      */
-    public function testCategoryCreation(): void
+    public function testInsertn(): void
     {
         $category = new Category();
 
@@ -29,7 +29,7 @@ class CategoryTest extends TestCase
         ]);
     }
 
-    public function testInsertManyCategories(): void
+    public function testInsertMany(): void
     {
         $categories = [];
         for ($i = 1; $i <= 10; $i++) {
