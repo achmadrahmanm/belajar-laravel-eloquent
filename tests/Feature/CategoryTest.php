@@ -110,4 +110,34 @@ class CategoryTest extends TestCase
             ['description' => 'Description updated in bulk']
         );
     }
+
+    public function testDelete(): void
+    {
+        $this->seed(CategorySeeder::class);
+
+        $category = Category::find('cat-001');
+        $category->delete();
+
+        $this->assertDatabaseMissing('categories', [
+            'id' => 'cat-001',
+        ]);
+    }
+
+    public function testDeleteMany(): void
+    {
+        $categories = [];
+        for ($i = 1; $i <= 5; $i++) {
+            $categories[] = [
+                'id' => 'cat-delete-' . str_pad($i, 3, '0', STR_PAD_LEFT),
+                'name' => 'Category Delete ' . $i,
+                'description' => 'This is the category number ' . $i . '.',
+            ];
+        }
+
+        Category::insert($categories);
+        $this->assertCount(5, Category::all(), 'There should be 5 categories before deletion.');
+
+        Category::where('id', 'like', 'cat-delete-%')->delete();
+        $this->assertCount(0, Category::where('id', 'like', 'cat-delete-%')->get(), 'All categories with id starting with cat-delete-* should be deleted.');
+    }
 }
