@@ -7,6 +7,7 @@ use Illuminate\Foundation\Testing\RefreshDatabase;
 use Illuminate\Foundation\Testing\WithFaker;
 use Tests\TestCase;
 use Database\Seeders\CategorySeeder;
+use App\Models\Scopes\IsActiveScope;
 
 class CategoryTest extends TestCase
 {
@@ -165,12 +166,6 @@ class CategoryTest extends TestCase
 
     public function testScopeActive(): void
     {
-        // $this->seed(CategorySeeder::class);
-
-        // // Assuming the IsActiveScope is applied globally
-        // $activeCategories = Category::all();
-        // $this->assertTrue($activeCategories->isNotEmpty(), 'There should be active categories by default.');
-
         // Now let's create an active category
         $category = new Category();
         $category->id = 'cat-active-001';
@@ -181,5 +176,19 @@ class CategoryTest extends TestCase
 
         $activeCategories = Category::all();
         $this->assertCount(1, $activeCategories, 'There should be 1 active category after inserting an active category.');
+    }
+
+    public function testWithoutScope(): void
+    {
+        // Now let's create an inactive category
+        $category = new Category();
+        $category->id = 'cat-inactive-001';
+        $category->name = 'Inactive Category';
+        $category->description = 'This category is inactive.';
+        $category->is_active = true; // Set the active status to false
+        $category->save();
+
+        $inactiveCategories  = Category::withoutGlobalScope(IsActiveScope::class)->find('cat-inactive-001');
+        $this->assertNotNull($inactiveCategories, 'The inactive category should be found when global scope is removed.');
     }
 }
