@@ -14,6 +14,13 @@ class Comment extends Model
     public $incrementing = true;
     public $timestamps = true;
 
+    // Default values for attributes
+    protected $attributes = [
+        'title' => 'Sample Title',
+        'comment' => 'Sample Comment',
+    ];
+
+    // Fillable attributes for mass assignment
     protected $fillable = [
         'email',
         'title',
