@@ -55,4 +55,18 @@ class CategoryTest extends TestCase
         $this->assertNotNull($category, 'Category with id cat-001 should exist.');
         $this->assertEquals('Category 1', $category->name, 'Category name should be Category 1.');
     }
+
+    public function testUpdate(): void
+    {
+        $this->seed(CategorySeeder::class);
+
+        $category = Category::find('cat-001');
+        $category->name = 'Updated Category 1';
+        $category->save();
+
+        $this->assertDatabaseHas('categories', [
+            'id' => 'cat-001',
+            'name' => 'Updated Category 1',
+        ]);
+    }
 }
